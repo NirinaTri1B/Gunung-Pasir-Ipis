@@ -18,11 +18,33 @@
     <div id="map" style="width: 100%; height: 450px; border-radius: 12px; border: 2px solid #414833;"></div>
     <br>
 
-    <button id="btn-sos" class="btn-logout" style="background-color: #A94442; width: 100%; padding: 15px; font-size: 18px; color: white; border: none; border-radius: 8px; cursor: pointer;">
-        <i class="fas fa-exclamation-triangle"></i> KIRIM SOS (DARURAT)
-    </button>
+    {{-- 1. CEK STATUS AKTIF MENDAKI (PEMBUNGKUS UTAMA) --}}
+    @if($isAktif)
+        {{-- Jika sedang mendaki, tampilkan tombol SOS atau status bantuannya --}}
+        @if(!$sosAktif)
+            <button id="btn-sos" class="btn-logout" style="background-color: #A94442; width: 100%; padding: 15px; font-size: 18px; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-exclamation-triangle"></i> KIRIM SOS (DARURAT)
+            </button>
+        @elseif($sosAktif->status == 'aktif')
+            <div style="background-color: #ffb703; padding: 20px; border-radius: 8px; text-align: center; margin-top: 15px;">
+                <h4 style="color: #d62828; font-weight: bold; margin: 0;">Laporan Terkirim!</h4>
+                <p style="margin: 5px 0 0 0; color: #333;">Menunggu petugas Basecamp merespon laporan Anda...</p>
+            </div>
+        @elseif($sosAktif->status == 'ditangani')
+            <div style="background-color: #E0F7FA; border: 2px solid #0077B6; padding: 20px; border-radius: 8px; text-align: center; margin-top: 15px;">
+                <h4 style="color: #0077B6; font-weight: bold; margin: 0;">BANTUAN SEDANG MENUJU LOKASI!</h4>
+                <p style="margin: 5px 0 0 0; color: #333;">Tetap tenang, tim sedang menuju titik koordinat Anda.</p>
+            </div>
+        @endif
+    @else
+        {{-- 2. TAMPILAN JIKA TIDAK SEDANG MENDAKI --}}
+        <div style="background-color: #f8f9fa; border: 2px dashed #ccc; padding: 20px; border-radius: 8px; text-align: center; margin-top: 15px;">
+            <i class="fas fa-lock" style="font-size: 24px; color: #aaa; margin-bottom: 10px;"></i>
+            <h4 style="color: #666; font-weight: bold; margin: 0;">Fitur Darurat Terkunci</h4>
+            <p style="margin: 5px 0 0 0; color: #888; font-size: 14px;">Tombol SOS hanya aktif saat kamu dalam masa pendakian di Puncak Pasir Ipis.</p>
+        </div>
+    @endif
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // 1. INISIALISASI PETA
@@ -48,7 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     L.marker([-6.750533, 107.675120], {icon: iconPos}).addTo(map).bindPopup("Pos 1");
-    L.marker([-6.754091, 107.669906], {icon: iconPos}).addTo(map).bindPopup("Pos 2");
+    L.marker([-6.751687, 107.673611], {icon: iconPos}).addTo(map).bindPopup("Pos 2");
+    L.marker([-6.753086, 107.670519], {icon: iconPos}).addTo(map).bindPopup("Pos 3");
+    L.marker([-6.754686, 107.669067], {icon: iconPos}).addTo(map).bindPopup("Pos 4");
+    L.marker([-6.755796, 107.665480], {icon: iconPos}).addTo(map).bindPopup("Pos 5");
 
     // 4. LOAD GPX JALUR
     var gpxUrl = "{{ asset('maps/Jalurpasiripis.gpx') }}";
@@ -108,99 +133,111 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- LOGIKA TOMBOL SOS (DATABASE) ---
-    // Dipindahkan ke dalam DOMContentLoaded agar bisa akses 'userMarker'
-    document.getElementById('btn-sos').addEventListener('click', function() {
-    Swal.fire({
-        title: 'DARURAT (SOS)',
-        icon: 'warning',
-        iconColor: '#A94442',
-        customClass: { popup: 'swal2-popup-sos' },
-        html: `
-            <div style="text-align: left;">
-                <label style="font-weight:600; font-size:14px; color:#555;">Kategori Kendala:</label>
-                <select id="jenis_sos" class="swal2-select swal-input-sos">
-                    <option value="Tersesat">Tersesat</option>
-                    <option value="Cedera / Luka-luka">Cedera / Luka-luka</option>
-                    <option value="Bahaya Lainnya">Bahaya Lainnya (Tuliskan...)</option>
-                </select>
+    var btnSos = document.getElementById('btn-sos');
 
-                <div id="box-pesan" style="display: none;"> <label style="font-weight:600; font-size:14px; color:#555; margin-top:10px; display:block;">Pesan Tambahan:</label>
-                    <textarea id="pesan" class="swal2-textarea swal-input-sos" placeholder="Sebutkan kendala kamu..."></textarea>
-                </div>
-            </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'KIRIM BANTUAN',
-        confirmButtonColor: '#A94442',
-
-        // --- LOGIKA MUNCULIN PESAN ---
-        didOpen: () => {
-            const select = document.getElementById('jenis_sos');
-            const boxPesan = document.getElementById('box-pesan');
-
-            select.addEventListener('change', function() {
-                if (this.value === 'Bahaya Lainnya') {
-                    boxPesan.style.display = 'block'; // Muncul kalau pilih Lainnya
-                } else {
-                    boxPesan.style.display = 'none';  // Sembunyi kalau pilih yang lain
-                    document.getElementById('pesan').value = ''; // Reset isinya
-                }
-            });
-        },
-
-        preConfirm: () => {
-            const jenis = document.getElementById('jenis_sos').value;
-            const pesan = document.getElementById('pesan').value;
-            const lat = userMarker.getLatLng().lat;
-            const lng = userMarker.getLatLng().lng;
-
-            if (lat === 0 && lng === 0) {
-                Swal.showValidationMessage('GPS belum aktif! Pastikan izin lokasi aktif.');
-                return false;
-            }
-
-            // Tetap kirim data, tapi pesan boleh kosong ("")
-            return { jenis, pesan, lat, lng };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Loading state biar keren
+    // Cek apakah tombol SOS sedang muncul di layar
+    if (btnSos) {
+        btnSos.addEventListener('click', function() {
             Swal.fire({
-                title: 'Mengirim Sinyal...',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
-            });
+                title: 'DARURAT (SOS)',
+                icon: 'warning',
+                iconColor: '#A94442',
+                customClass: { popup: 'swal2-popup-sos' },
+                html: `
+                    <div style="text-align: left;">
+                        <label style="font-weight:600; font-size:14px; color:#555;">Kategori Kendala:</label>
+                        <select id="jenis_sos" class="swal2-select swal-input-sos">
+                            <option value="Tersesat">Tersesat</option>
+                            <option value="Cedera / Luka-luka">Cedera / Luka-luka</option>
+                            <option value="Bahaya Lainnya">Bahaya Lainnya (Tuliskan...)</option>
+                        </select>
 
-            fetch("{{ route('sos.kirim') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        <div id="box-pesan" style="display: none;"> <label style="font-weight:600; font-size:14px; color:#555; margin-top:10px; display:block;">Pesan Tambahan:</label>
+                            <textarea id="pesan" class="swal2-textarea swal-input-sos" placeholder="Sebutkan kendala kamu..."></textarea>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'KIRIM BANTUAN',
+                confirmButtonColor: '#A94442',
+
+                didOpen: () => {
+                    const select = document.getElementById('jenis_sos');
+                    const boxPesan = document.getElementById('box-pesan');
+
+                    select.addEventListener('change', function() {
+                        if (this.value === 'Bahaya Lainnya') {
+                            boxPesan.style.display = 'block';
+                        } else {
+                            boxPesan.style.display = 'none';
+                            document.getElementById('pesan').value = '';
+                        }
+                    });
                 },
-                body: JSON.stringify({
-                    jenis_sos: result.value.jenis,
-                    latitude: result.value.lat,
-                    longitude: result.value.lng,
-                    pesan_tambahan: result.value.pesan
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
+
+                preConfirm: () => {
+                    const jenis = document.getElementById('jenis_sos').value;
+                    const pesan = document.getElementById('pesan').value;
+                    const lat = userMarker.getLatLng().lat;
+                    const lng = userMarker.getLatLng().lng;
+
+                    if (lat === 0 && lng === 0) {
+                        Swal.showValidationMessage('GPS belum aktif! Pastikan izin lokasi aktif.');
+                        return false;
+                    }
+
+                    return { jenis, pesan, lat, lng };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'TERKIRIM!',
-                        text: data.message,
-                        icon: 'success',
-                        confirmButtonColor: '#414833'
+                        title: 'Mengirim Sinyal...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+
+                    fetch("{{ route('sos.kirim') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            jenis_sos: result.value.jenis,
+                            latitude: result.value.lat,
+                            longitude: result.value.lng,
+                            pesan_tambahan: result.value.pesan
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            Swal.fire({
+                                title: 'TERKIRIM!',
+                                // text: data.message, <--- BAGIAN INI DIHAPUS ATAU DIKOMENTAR
+                                icon: 'success',
+                                confirmButtonColor: '#414833'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire('Gagal', 'Koneksi bermasalah, coba lagi!', 'error');
                     });
                 }
-            })
-            .catch(err => {
-                Swal.fire('Gagal', 'Koneksi bermasalah, coba lagi!', 'error');
             });
-        }
-    });
-});
+        });
+    } // Akhir dari pengecekan tombol SOS
 });
 </script>
+
+<!-- SCRIPT AUTO REFRESH -->
+{{-- @if($sosAktif && $sosAktif->status == 'aktif')
+<script>
+    setTimeout(function() {
+        window.location.reload();
+    }, 5000); // Otomatis refresh tiap 5 detik
+</script>
+@endif --}}
 @endsection

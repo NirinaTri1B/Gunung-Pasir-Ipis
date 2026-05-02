@@ -211,7 +211,7 @@
                     @endfor
                 </div>
             </div>
-            <p style="color: #999; margin: 0; font-size: 16px;">Total <strong>{{ $ulasan->count() }}</strong> ulasan dari pendaki</p>
+
         </div>
 
         <div class="ulasan-list">

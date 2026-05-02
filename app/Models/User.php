@@ -49,4 +49,14 @@ protected $keyType = 'string'; // KUNCI UTAMA: Beritahu Laravel ID itu teks/stri
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Relasi ke model Registrasi
+     * Seorang user bisa punya banyak riwayat registrasi (HasMany)
+     */
+    public function registrasi()
+    {
+        // Kita arahkan ke model Registrasi, sebutkan Foreign Key, dan Local Key-nya
+        return $this->hasMany(\App\Models\Registrasi::class, 'id_user', 'id_user');
+    }
 }

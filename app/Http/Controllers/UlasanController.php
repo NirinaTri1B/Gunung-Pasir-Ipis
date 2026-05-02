@@ -14,7 +14,13 @@ class UlasanController extends Controller
         $rataRata = \App\Models\Ulasan::avg('rating') ?? 0;
         $rataRata = number_format($rataRata, 1);
 
-        return view('pendaki.ulasan', compact('ulasan', 'rataRata'));
+        // --- TAMBAHKAN LOGIKA INI SUPAYA SIDEBAR GAK ERROR ---
+        $isAktif = \App\Models\Registrasi::where('id_user', auth()->id())
+                    ->where('status_pendakian', 'aktif')
+                    ->exists();
+
+        // Masukkan 'isAktif' ke dalam compact
+        return view('pendaki.ulasan', compact('ulasan', 'rataRata', 'isAktif'));
     }
     public function store(Request $request)
     {

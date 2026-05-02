@@ -12,9 +12,22 @@ class PendakiController extends Controller
     // 1. Menampilkan Halaman Dashboard
     public function index()
     {
-        // Ambil data user yang sedang login
-        $user = Auth::user();
-        return view('pendaki.dbpendaki', compact('user'));
+        // 1. Ambil data user yang sedang login
+        $user = \Auth::user();
+
+        // 2. Cek apakah ada laporan SOS milik user ini yang belum selesai (Kodingan lamamu)
+        $sosAktif = \App\Models\Sos::where('id_user', $user->id_user)
+                    ->whereIn('status', ['aktif', 'ditangani'])
+                    ->first();
+
+        // 3. TAMBAHAN: Cek apakah pendaki ini punya registrasi yang statusnya 'aktif'
+        // Ini yang akan kita pakai buat kunci/buka menu SOS & Satwa
+        $isAktif = \App\Models\Registrasi::where('id_user', $user->id_user)
+                    ->where('status_pendakian', 'aktif')
+                    ->exists();
+
+        // 4. Kirim semua variabel ke view
+        return view('pendaki.dbpendaki', compact('user', 'sosAktif', 'isAktif'));
     }
 
     // 2. Menyimpan Perubahan Profil (Alamat & No Telp)
@@ -43,8 +56,13 @@ class PendakiController extends Controller
     public function showProfil()
     {
         $user = Auth::user();
-        // Arahkan ke file resources/views/pendaki/profil.blade.php
-        return view('pendaki.profil', compact('user'));
+
+        // TAMBAHKAN INI
+        $isAktif = \App\Models\Registrasi::where('id_user', $user->id_user)
+                    ->where('status_pendakian', 'aktif')
+                    ->exists();
+
+        return view('pendaki.profil', compact('user', 'isAktif'));
     }
     public function kirimSos(Request $request)
     {
@@ -56,8 +74,7 @@ class PendakiController extends Controller
             'pesan_tambahan' => $request->pesan_tambahan,
             'status'         => 'aktif'
         ]);
-
-        return response()->json(['success' => true, 'message' => 'Bantuan sedang dalam perjalanan!']);
+        return response()->json(['success' => true]);
     }
     public function destroyAccount()
     {
@@ -88,5 +105,37 @@ class PendakiController extends Controller
         }
 
         return redirect()->back()->with('error', 'User tidak ditemukan.');
+    }
+    public function halamanSos()
+    {
+        $idUser = auth()->user()->id_user;
+
+        $sosAktif = \App\Models\Sos::where('id_user', $idUser)
+                    ->whereIn('status', ['aktif', 'ditangani'])
+                    ->first();
+
+        // TAMBAHKAN INI
+        $isAktif = \App\Models\Registrasi::where('id_user', $idUser)
+                    ->where('status_pendakian', 'aktif')
+                    ->exists();
+
+        return view('pendaki.sos', compact('sosAktif', 'isAktif'));
+    }
+    public function aktivitas()
+    {
+        $userId = auth()->user()->id_user;
+
+        // Ambil data aktivitas (kodingan lama)
+        $aktivitas = \App\Models\Registrasi::with('transaksi')
+                    ->where('id_user', $userId)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        // TAMBAHKAN INI: Agar sidebar tidak error
+        $isAktif = \App\Models\Registrasi::where('id_user', $userId)
+                    ->where('status_pendakian', 'aktif')
+                    ->exists();
+
+        return view('pendaki.aktivitas', compact('aktivitas', 'isAktif'));
     }
 }

@@ -198,15 +198,22 @@
                 <i class="fas fa-map-marked-alt"></i> Jalur Pendakian
             </a>
 
-            <a href="{{ url('/laporan-satwa') }}" class="menu-item {{ request()->is('laporan-satwa*') ? 'active' : '' }}">
-                <i class="fas fa-paw"></i> Laporan Satwa
-            </a>
+<!-- Kunci akses Laporan Satwa -->
+            @if($isAktif)
+                <a href="{{ url('/laporan-satwa') }}" class="menu-item {{ request()->is('laporan-satwa*') ? 'active' : '' }}">
+                    <i class="fas fa-paw"></i> Laporan Satwa
+                </a>
+            @else
+                <a href="#" class="menu-item" style="opacity: 0.5; cursor: not-allowed;" onclick="Swal.fire('Akses Terkunci', 'Fitur ini hanya tersedia saat kamu dalam masa pendakian di Puncak Pasir Ipis.', 'info')">
+                    <i class="fas fa-paw"></i> Laporan Satwa (Terkunci)
+                </a>
+            @endif
 
             <a href="{{ route('pendaki.ulasan') }}" class="menu-item {{ request()->is('pendaki/ulasan*') ? 'active' : '' }}">
                 <i class="fas fa-comments"></i> Ulasan
             </a>
 
-            <a href="#" class="menu-item">
+            <a href="{{ route('pendaki.aktivitas') }}" class="menu-item {{ request()->is('pendaki/aktivitas') ? 'active' : '' }}">
                 <i class="fas fa-history"></i> Aktivitas Pendakian
             </a>
 

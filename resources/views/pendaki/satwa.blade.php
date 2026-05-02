@@ -10,12 +10,12 @@
             @csrf
 
             <div class="form-group mb-3">
-                <label>Nama Satwa*</label><br>
+                <label>Nama Satwa</label><br>
                 <input type="text" name="nama_satwa" class="form-control" placeholder="Contoh: Babi Hutan, Lutung, dll" required>
             </div><br>
 
             <div class="form-group mb-3">
-                <label>Lokasi Terlihat*</label><br>
+                <label>Lokasi Terlihat</label><br>
                 <select name="lokasi" class="form-select" required>
                     <option value="" disabled selected>-- Pilih Lokasi --</option>
                     <option value="Pos 1">Sekitar Pos 1</option>
@@ -32,7 +32,7 @@
             </div><br>
 
             <div class="form-group mb-4">
-                <label>Foto Bukti*</label><br>
+                <label>Foto Bukti</label><br>
                 <input type="file" name="foto" class="form-control" accept="img/satwa" required>
             </div><br>
 

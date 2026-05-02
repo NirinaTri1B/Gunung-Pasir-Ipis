@@ -29,7 +29,7 @@ class AuthController extends Controller
         if ($user->role == 'admin') {
             return redirect('/admin/dashboard')->with('success', 'Selamat datang Admin!');
         } elseif ($user->role == 'karyawan') {
-            return redirect('/karyawan/dashboard')->with('success', 'Selamat bekerja, Karyawan!');
+            return redirect('/karyawan/db')->with('success', 'Selamat bekerja, Karyawan!');
         } elseif ($user->role == 'pendaki') {
             return redirect('/pendaki/dbpendaki')->with('success', 'Halo Pendaki! Selamat datang kembali.');
         }
