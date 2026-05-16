@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\user;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,6 +32,9 @@ class AuthController extends Controller
             return redirect('/karyawan/db')->with('success', 'Selamat bekerja, Karyawan!');
         } elseif ($user->role == 'pendaki') {
             return redirect('/pendaki/dbpendaki')->with('success', 'Halo Pendaki! Selamat datang kembali.');
+        } elseif ($user->role == 'petugas_lapangan') {
+            // Atau lebih aman gunakan: return redirect()->route('petugas.dashboard');
+            return redirect('/petugas/dashboard')->with('success', 'Selamat bekerja, Petugas Lapangan!');
         }
 
         // Kalau role kosong atau aneh (misal NULL), kita logout paksa

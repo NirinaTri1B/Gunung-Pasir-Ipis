@@ -15,7 +15,7 @@ class PendakiController extends Controller
         // 1. Ambil data user yang sedang login
         $user = \Auth::user();
 
-        // 2. Cek apakah ada laporan SOS milik user ini yang belum selesai (Kodingan lamamu)
+        // 2. Cek apakah ada laporan SOS milik user ini yang belum selesai
         $sosAktif = \App\Models\Sos::where('id_user', $user->id_user)
                     ->whereIn('status', ['aktif', 'ditangani'])
                     ->first();
@@ -33,25 +33,30 @@ class PendakiController extends Controller
     // 2. Menyimpan Perubahan Profil (Alamat & No Telp)
     public function update(Request $request)
     {
-        $user = Auth::user();
+        $user = \App\Models\User::find(auth()->user()->id_user);
 
-        // Validasi simpel
+        // 1. Validasi input
         $request->validate([
-            'nama_user' => 'required|string|max:30',
+            'nama_user' => 'required|string|max:255',
             'no_telp'   => 'nullable|numeric',
             'alamat'    => 'nullable|string',
+            'password'  => 'nullable|confirmed|min:6', // Pastikan password & konfirmasi cocok
         ]);
 
-        // Proses Update ke Database
-        $user->update([
-            'nama_user' => $request->nama_user,
-            'no_telp'   => $request->no_telp,
-            'alamat'    => $request->alamat,
-        ]);
+        // 2. Update data dasar
+        $user->nama_user = $request->nama_user;
+        $user->no_telp   = $request->no_telp;
+        $user->alamat    = $request->alamat;
 
-        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
+        // 3. Logika Ganti Password
+        if ($request->filled('password')) {
+            $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Profil dan keamanan akun berhasil diperbarui!');
     }
-    // app/Http/Controllers/PendakiControlsler.php
 
     public function showProfil()
     {
@@ -66,15 +71,37 @@ class PendakiController extends Controller
     }
     public function kirimSos(Request $request)
     {
+        // Cari data registrasi si pendaki yang statusnya masih 'mendaki'
+        $registrasi = \App\Models\Registrasi::where('id_user', auth()->user()->id_user)
+                                            ->where('status_pendakian', 'aktif') // nama kolom & status di DB
+                                            ->first();
+
         \App\Models\Sos::create([
-            'id_user'        => Auth::id(),
-            'jenis_sos'      => $request->jenis_sos,
-            'latitude'       => $request->latitude,
-            'longitude'      => $request->longitude,
-            'pesan_tambahan' => $request->pesan_tambahan,
-            'status'         => 'aktif'
+            'id_user' => auth()->user()->id_user,
+            'id_registrasi' => $registrasi ? $registrasi->id_registrasi : null,
+            'jenis_sos' => $request->jenis_sos,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'status' => 'aktif',
+            'status_sos' => 'pending'
         ]);
+
         return response()->json(['success' => true]);
+    }
+    public function updateLokasiPendaki(Request $request)
+    {
+        $sos = Sos::where('id_user', auth()->user()->id_user)
+                ->whereIn('status', ['aktif', 'ditangani'])
+                ->first();
+
+        if ($sos) {
+            $sos->update([
+                'latitude' => $request->lat,
+                'longitude' => $request->lng
+            ]);
+            return response()->json(['status' => 'success']);
+        }
+        return response()->json(['status' => 'error'], 404);
     }
     public function destroyAccount()
     {
@@ -114,7 +141,6 @@ class PendakiController extends Controller
                     ->whereIn('status', ['aktif', 'ditangani'])
                     ->first();
 
-        // TAMBAHKAN INI
         $isAktif = \App\Models\Registrasi::where('id_user', $idUser)
                     ->where('status_pendakian', 'aktif')
                     ->exists();
@@ -137,5 +163,18 @@ class PendakiController extends Controller
                     ->exists();
 
         return view('pendaki.aktivitas', compact('aktivitas', 'isAktif'));
+    }
+    public function informasiUmum()
+    {
+        // 1. Ambil ID user yang sedang login
+        $userId = auth()->user()->id_user;
+
+        // 2. Cek apakah pendaki ini punya registrasi yang statusnya masih 'aktif'
+        $isAktif = \App\Models\Registrasi::where('id_user', $userId)
+                    ->where('status_pendakian', 'aktif')
+                    ->exists();
+
+        // 3. Kirim variabel $isAktif ke view informasi
+        return view('pendaki.informasi', compact('isAktif'));
     }
 }

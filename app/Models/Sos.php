@@ -15,8 +15,23 @@ class Sos extends Model
         'latitude',
         'longitude',
         'pesan_tambahan',
-        'status'
+        'status',
+        'id_petugas',
+        'lat_petugas',
+        'lng_petugas',
+        'status_sos'
     ];
+
+    // relasi ke tabel registrasi
+    public function registrasi()
+    {
+        return $this->belongsTo(\App\Models\Registrasi::class, 'id_registrasi');
+    }
+    public function petugas()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'id_petugas');
+    }
+
     // Relasi ke tabel user
     public function user()
     {

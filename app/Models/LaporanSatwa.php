@@ -22,6 +22,8 @@ class LaporanSatwa extends Model
         'status'
     ];
 
-    // 3. Opsional: Kalau kamu mau otomatis ada jam laporannya
-    // Laravel bakal nyari kolom 'created_at' dan 'updated_at' secara default
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
 }

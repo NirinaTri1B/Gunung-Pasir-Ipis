@@ -16,7 +16,8 @@ class Ulasan extends Model
     protected $fillable = [
         'id_user',
         'komentar',
-        'rating'
+        'rating',
+        'balasan'
     ];
 
     /**
@@ -24,6 +25,6 @@ class Ulasan extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
+        return $this->belongsTo(\App\Models\User::class, 'id_user');
     }
 }

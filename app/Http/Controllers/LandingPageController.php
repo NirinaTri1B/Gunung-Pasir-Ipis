@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\Galeri;
 
 class LandingPageController extends Controller
 {
@@ -15,8 +16,11 @@ class LandingPageController extends Controller
         $rataRata = \App\Models\Ulasan::avg('rating') ?? 0;
         $rataRata = number_format($rataRata, 1);
 
-        // 3. Kirim kedua variabel ke view index
-        return view('index', compact('ulasan', 'rataRata'));
+        // 3. Ambil semua gambar dari tabel galeri
+        $galeri = Galeri::all();
+
+        // 4. Kirim kedua variabel ke view index
+        return view('index', compact('ulasan', 'rataRata', 'galeri'));
     }
 
 }
