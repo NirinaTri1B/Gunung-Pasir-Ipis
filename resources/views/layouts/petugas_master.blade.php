@@ -9,10 +9,21 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* Kasih jarak bawah buat Show Entries dan Search */
+    .dataTables_length, .dataTables_filter {
+        margin-bottom: 20px !important;
+        padding-top: 10px;
+    }
+
+    /* Kasih jarak atas buat Info dan Pagination di bawah tabel */
+    .dataTables_info, .dataTables_paginate {
+        margin-top: 20px !important;
+    }
         /* CSS RESET & UTILITY */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: #F4F7F0; color: #333; display: flex; height: 100vh; overflow: hidden; }
@@ -267,7 +278,7 @@
     .btn-reg-submit { background: #333D29; color: white; border: none; padding: 13px 35px; border-radius: 12px; font-weight: 700; cursor: pointer; }
     .btn-reg-cancel { background: #656D4A; color: white; border: none; padding: 13px 35px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-    /* VALIDASI SYNC (Warna Sage) */
+    /* VALIDASI SYNC (Warna Sage Elsa) */
     .modal-grid-validasi { display: flex; text-align: left; position: relative; }
     .modal-grid-validasi .col-left { flex: 1.2; padding: 30px; background: #C2C5AA; border-right: 1px solid rgba(0,0,0,0.1); }
     .modal-grid-validasi .col-right { flex: 0.8; padding: 30px; background: #A4AC86; }
@@ -378,20 +389,12 @@ nav div.hidden {
         </div>
 
         <div class="sidebar-menu">
-            <a href="{{ route('karyawan.db') }}" class="menu-item {{ request()->is('karyawan/db*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list"></i> Registrasi Pendaki
+            <a href="{{ route('petugas.dblap') }}" class="menu-item {{ request()->routeIs('petugas.dblap') ? 'active' : '' }}">
+                <i class="fas fa-tasks"></i> Tugas Penyelamatan
             </a>
 
-            <a href="{{ route('karyawan.riwayat') }}" class="menu-item {{ request()->is('karyawan/riwayat*') ? 'active' : '' }}">
-                <i class="fas fa-history"></i> Riwayat Registrasi
-            </a>
-
-            <a href="{{ route('karyawan.sos') }}" class="menu-item {{ request()->is('karyawan/sos*') ? 'active' : '' }}">
-                <i class="fas fa-exclamation-triangle"></i> Laporan SOS
-            </a>
-
-            <a href="{{ route('karyawan.satwa.index') }}" class="menu-item {{ request()->is('karyawan/satwa*') ? 'active' : '' }}">
-                <i class="fas fa-paw"></i> Laporan Satwa
+            <a href="{{ route('petugas.riwayat') }}" class="menu-item {{ request()->routeIs('petugas.riwayat') ? 'active' : '' }}">
+                <i class="fas fa-history"></i> Riwayat Penanganan
             </a>
         </div>
 
@@ -409,7 +412,7 @@ nav div.hidden {
         <div class="header">
             <div class="header-title">@yield('page_title', 'Dashboard Karyawan')</div>
             <div class="header-user">
-                <span class="user-name" style="font-weight: bold;">Petugas Basecamp</span>
+                <span class="user-name" style="font-weight: bold;">{{ Auth::user()->nama_user }}</span>
                 <i class="fas fa-user-shield"></i>
             </div>
         </div>

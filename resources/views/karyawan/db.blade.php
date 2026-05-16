@@ -4,22 +4,40 @@
 
 @section('content')
 <div class="container-fluid" style="padding: 20px;">
-    <!-- 1. STATISTIK -->
-    <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+    <!-- 1. TIGA KARTU STATISTIK & NOTIFIKASI -->
+    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+
+        <!-- Kartu 1: Pendaki Aktif -->
         <div style="flex: 1; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 6px solid #414833; display: flex; align-items: center; justify-content: space-between;">
             <div>
                 <small style="color: #888; font-weight: 500; text-transform: uppercase; font-size: 11px;">Status Pendaki Aktif</small>
-                <h3 style="margin: 0; color: #414833; font-size: 24px; font-weight: 700;">{{ $totalAktif ?? 0 }} Orang</h3>
+                <h3 style="margin: 0; color: #414833; font-size: 24px; font-weight: 700;">{{ $totalAktif ?? 0 }} <span style="font-size: 14px; font-weight: normal;">Orang</span></h3>
             </div>
-            <i class="fas fa-hiking" style="font-size: 35px; color: #A4AC86; opacity: 0.5;"></i>
+            <i class="fas fa-hiking" style="font-size: 30px; color: #414833; opacity: 0.2;"></i>
         </div>
-        <div style="flex: 1; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 6px solid #656D4A; display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <small style="color: #888; font-weight: 500; text-transform: uppercase; font-size: 11px;">Notifikasi Baru</small>
-                <h3 style="margin: 0; color: #656D4A; font-size: 24px; font-weight: 700;">{{ $totalNotif ?? 0 }} Notif</h3>
+
+        <!-- Kartu 2: Notifikasi SOS (Klik ke Halaman SOS) -->
+        <a href="{{ route('karyawan.sos') }}" style="flex: 1; text-decoration: none; display: flex;">
+            <div class="card-sos {{ ($totalNotif ?? 0) > 0 ? 'sos-active' : '' }}"
+                style="flex: 1; background: {{ ($totalNotif ?? 0) > 0 ? '#ffe5e5' : 'white' }}; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 6px solid #d62828; display: flex; align-items: center; justify-content: space-between; transition: 0.3s; position: relative; overflow: hidden;">
+                <div>
+                    <small style="color: {{ ($totalNotif ?? 0) > 0 ? '#b91c1c' : '#888' }}; font-weight: 700; text-transform: uppercase; font-size: 11px;">Darurat SOS</small>
+                    <h3 style="margin: 0; color: #d62828; font-size: 24px; font-weight: 800;">{{ $totalNotif ?? 0 }} <span style="font-size: 14px; font-weight: normal;">Laporan</span></h3>
+                </div>
+                <i class="fas fa-exclamation-triangle {{ ($totalNotif ?? 0) > 0 ? 'fa-beat' : '' }}" style="font-size: 30px; color: #d62828; opacity: {{ ($totalNotif ?? 0) > 0 ? '1' : '0.2' }};"></i>
             </div>
-            <i class="fas fa-bell" style="font-size: 35px; color: #A4AC86; opacity: 0.5;"></i>
-        </div>
+        </a>
+
+        <!-- Kartu 3: Notifikasi Satwa (Klik ke Halaman Satwa) -->
+        <a href="{{ route('karyawan.satwa.index') }}" style="flex: 1; text-decoration: none; display: flex;">
+            <div style="flex: 1; background: {{ ($totalSatwa ?? 0) > 0 ? '#f0f4e8' : 'white' }}; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 6px solid #656D4A; display: flex; align-items: center; justify-content: space-between; transition: 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                <div>
+                    <small style="color: #888; font-weight: 500; text-transform: uppercase; font-size: 11px;">Laporan Satwa</small>
+                    <h3 style="margin: 0; color: #656D4A; font-size: 24px; font-weight: 700;">{{ $totalSatwa ?? 0 }} <span style="font-size: 14px; font-weight: normal;">Laporan</span></h3>
+                </div>
+                <i class="fas fa-paw" style="font-size: 30px; color: #656D4A; opacity: {{ ($totalSatwa ?? 0) > 0 ? '1' : '0.2' }};"></i>
+            </div>
+        </a>
     </div>
 
     <!-- 2. SEARCH -->

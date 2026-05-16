@@ -1,4 +1,4 @@
-@extends('layouts.dbpendaki_master')
+@extends('layouts.pendaki_master')
 
 @section('page_title', 'Riwayat Aktivitas Pendakian')
 

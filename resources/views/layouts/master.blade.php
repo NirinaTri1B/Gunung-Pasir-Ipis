@@ -309,6 +309,8 @@ nav.sticky {
   position: fixed;
   top: 0;
   width: 100%;
+  z-index: 9999 !important; /* TAMBAHKAN INI: Biar menu paling depan */
+  background-color: #E7F5DC; /* TAMBAHKAN INI: Biar menu gak transparan pas scroll */
 }
 
 /* ========================
@@ -368,8 +370,23 @@ Sections
   background-color: rgba(85, 110, 89, 0.25);
 }
 
-.intro .container, .features .container, .portfolio .container, .contact .container {
-  padding: 5em 0;
+/* Balikin dulu standarnya biar aman */
+.intro .container,
+.features .container,
+.portfolio .container,
+.contact .container {
+    padding-top: 5em;
+    padding-bottom: 5em; /* Standar awal */
+}
+
+/* KHUSUS untuk bagian Profil (Intro) yang di gambar Elsa mepet banget */
+.intro .container {
+    padding-bottom: 5em !important; /* Naikin sedikit dari 1em ke 3em biar gak sesak */
+}
+
+/* KHUSUS untuk bagian Galeri (Portfolio) biar jarak ke Ulasan gak kejauhan */
+.portfolio .container {
+    padding-bottom: 3em !important;
 }
 
 .intro, .features, .portfolio, .contact {
@@ -408,17 +425,26 @@ Sections
 .gallery .gallery-image {
   margin: 1em auto;
   width: 100%;
+  overflow: hidden; /* TAMBAHKAN INI: Biar zoom gambarnya gak keluar kotak */
+  border-radius: 8px; /* TAMBAHKAN INI: Biar sudutnya tetep bulet pas di-zoom */
 }
 
 .gallery .gallery-image img {
-  background-color: #728156; /* Palette #6 */
+  background-color: #728156;
   border-radius: 4px;
   display: block;
-  height: 300px; /* Sesuai request sebelumnya agar rapi */
+  height: 300px;
   object-fit: cover;
   padding: 6px;
   width: 100%;
+  transition: transform 0.3s ease; /* TAMBAHKAN INI: Biar zoom-nya mulus */
 }
+
+/* --- TAMBAHKAN EFEK INI DI BAWAHNYA --- */
+.gallery .gallery-image:hover img {
+  transform: scale(1.08); /* Efek zoom tipis pas kursor ke gambar */
+}
+
 /* --- CSS UNTUK LIGHTBOX GALERI SLIDER --- */
 
     .gallery-image img {

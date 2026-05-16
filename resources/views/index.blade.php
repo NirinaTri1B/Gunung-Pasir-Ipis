@@ -131,7 +131,7 @@
     </div>
 </div>
 
-<div class="container-fluid features" id="skills" style="background: #f8f9fa; padding: 80px 0;">
+<div class="container-fluid features" id="skills" style="background: #f8f9fa; padding: 30px 0 80px 0;">
   <div class="container cf text-center">
     <h2 style="color: #414833; font-weight: bold; margin-bottom: 10px;">Keunggulan Kami</h2>
     <hr style="width: 50px; border: 2px solid #656D4A; margin: 0 auto 40px;">
@@ -168,34 +168,24 @@
   <div class="container cf">
     <h2>Galeri Wisata</h2>
     <div class="gallery">
-      <div class="gallery-image">
-          <img src="{{ asset('img/01.jpg') }}" alt="Pemandangan 1">
-      </div>
-      <div class="gallery-image">
-          <img src="{{ asset('img/02.jpg') }}" alt="Pemandangan 3">
-      </div>
-      <div class="gallery-image">
-          <img src="{{ asset('img/03.jpg') }}" alt="Pemandangan 3">
-      </div>
-      <div class="gallery-image">
-          <img src="{{ asset('img/puncak.jpg') }}" alt="Pemandangan 6">
-      </div>
-      <div class="gallery-image">
-          <img src="{{ asset('img/06.jpg') }}" alt="Pemandangan 3">
-      </div>
-      <div class="gallery-image">
-          <img src="{{ asset('img/07.jpg') }}" alt="Pemandangan 3">
-      </div>
-      <div class="gallery-image">
-          <img src="{{ asset('img/08.jpg') }}" alt="Pemandangan 3">
-      </div>
+
+      @forelse($galeri as $g)
+        <div class="gallery-image">
+            <img src="{{ asset('storage/galeri/' . $g->foto) }}" alt="{{ $g->judul }}">
+        </div>
+      @empty
+        <div class="text-center w-100 p-4">
+            <p class="text-muted" style="font-style: italic;">Belum ada dokumentasi foto galeri.</p>
+        </div>
+      @endforelse
+
     </div>
   </div>
 </div>
 
-<div class="container-fluid intro" id="ulasan" style="background-color: #F4F7F0; padding: 60px 0;">
+<div class="container-fluid intro" id="ulasan" style="background-color: #F4F7F0; padding: 30px 0 60px 0;">
     <div class="container" style="max-width: 800px;">
-        <h2 style="text-align: center; margin-bottom: 10px; color: #414833; font-weight: bold;">Apa Kata Pendaki?</h2>
+        <h2 style="text-align: center; margin-top: 0; margin-bottom: 10px; color: #414833; font-weight: bold;">Apa Kata Pendaki?</h2>
         <p style="text-align: center; color: #728156; margin-bottom: 40px;">Ulasan asli dari para pengunjung Gunung Puncak Pasir Ipis</p>
 
         <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 50px; border-bottom: 2px solid #E0E5D8; padding-bottom: 40px;">
@@ -294,7 +284,9 @@
                 </p>
             </div>
 
-        </div> </div> </div>
+        </div>
+    </div>
+</div>
 
 <footer class="main-footer">
   <div class="container cf">

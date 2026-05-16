@@ -1,6 +1,6 @@
-@extends('layouts.dbpendaki_master')
+@extends('layouts.pendaki_master')
 
-@section('page_title', 'Kelola Akun')
+@section('page_title', 'Pengaturan Akun')
 
 @section('content')
 <style>
@@ -30,6 +30,15 @@
                 </div>
                 <hr style="border-top: 2px solid #f0f4e9; margin-bottom: 30px;">
 
+                @if ($errors->any())
+                    <div style="background: #fff5f5; color: #dc3545; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form action="{{ route('pendaki.update') }}" method="POST" id="formUpdateAkun">
                     @csrf
                     @method('PUT')
@@ -53,6 +62,20 @@
                         <div class="col-md-12 mb-4">
                             <label class="form-label"><i class="fas fa-map-marker-alt me-1"></i> Alamat Lengkap</label>
                             <textarea name="alamat" class="form-control-custom" rows="3" placeholder="Masukan alamat lengkap kamu...">{{ $user->alamat }}</textarea>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <hr style="border-top: 1px dashed #ddd; margin: 10px 0 25px 0;">
+                            <p style="font-size: 18px; color: #414833; font-weight: 600;">Ganti Password (Kosongkan jika tidak ingin mengubah)</p>
+                        </div><br>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-lock me-1"></i> Password Baru</label>
+                            <input type="password" name="password" class="form-control-custom" placeholder="Minimal 6 karakter">
+                        </div><br>
+
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label"><i class="fas fa-check me-1"></i> Konfirmasi Password</label>
+                            <input type="password" name="password_confirmation" class="form-control-custom" placeholder="Ulangi password baru">
                         </div>
                     </div>
 
