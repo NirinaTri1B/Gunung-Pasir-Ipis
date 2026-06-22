@@ -35,6 +35,11 @@
                     <i class="fas fa-print mr-1"></i> CETAK
                 </button>
 
+                <a href="{{ route('admin.dbadmin') }}"
+                   style="text-align: center; text-decoration: none; background: #f0f0f0; color: #666; padding: 11px; border-radius: 8px; font-weight: 600; font-size: 12px;">
+                    RESET
+                </a>
+
                 <div class="modal fade" id="modalCetakLaporan" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">

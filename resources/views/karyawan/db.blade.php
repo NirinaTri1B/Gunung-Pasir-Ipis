@@ -355,31 +355,55 @@ $(document).ready(function() {
                         btnDone.style.opacity = '1';
                         btnDone.style.cursor = 'pointer';
                     } else {
-                        hasilV.value = "Tidak Sesuai";
-                        hasilV.style.color = "red";
-                        divOpsi.style.display = 'block';
-                        infoDenda.innerText = `Denda: Rp ${(sampahAwalData - akhir) * 50000}`;
-                        if (selectSolusi.value === 'denda') opsiBayarDenda.style.display = 'block';
+                    hasilV.value = "Tidak Sesuai";
+                    hasilV.style.color = "red";
+                    divOpsi.style.display = 'block';
+                    infoDenda.innerText = `Denda: Rp ${(sampahAwalData - akhir) * 50000}`;
 
-                        // btn-done tetap disabled sampai pilih denda atau simpan riwayat
-                        btnDone.disabled = true;
-                        btnDone.style.opacity = '0.4';
-                        btnDone.style.cursor = 'not-allowed';
+                    const btnSimpanRiwayat = document.getElementById('btn-save-pelanggaran');
+                    if (selectSolusi.value === 'denda') {
+                        opsiBayarDenda.style.display = 'block';
+                        // Denda → Simpan Riwayat di-disable
+                        btnSimpanRiwayat.disabled = true;
+                        btnSimpanRiwayat.style.opacity = '0.4';
+                        btnSimpanRiwayat.style.cursor = 'not-allowed';
+                    } else {
+                        opsiBayarDenda.style.display = 'none';
+                        // Ambil Kembali → Simpan Riwayat aktif
+                        btnSimpanRiwayat.disabled = false;
+                        btnSimpanRiwayat.style.opacity = '1';
+                        btnSimpanRiwayat.style.cursor = 'pointer';
                     }
+
+                    // btn-done tetap disabled sampai pilih denda atau simpan riwayat
+                    btnDone.disabled = true;
+                    btnDone.style.opacity = '0.4';
+                    btnDone.style.cursor = 'not-allowed';
+                }
                 });
 
-                // Kalau pilih DENDA, enable btn-done langsung
                 selectSolusi.addEventListener('change', function() {
                     opsiBayarDenda.style.display = this.value === 'denda' ? 'block' : 'none';
 
+                    const btnSimpanRiwayat = document.getElementById('btn-save-pelanggaran');
+                    if (this.value === 'denda') {
+                        // Pilih Denda → Simpan Riwayat di-disable
+                        btnSimpanRiwayat.disabled = true;
+                        btnSimpanRiwayat.style.opacity = '0.4';
+                        btnSimpanRiwayat.style.cursor = 'not-allowed';
+                    } else {
+                        // Pilih Ambil Kembali → Simpan Riwayat aktif
+                        btnSimpanRiwayat.disabled = false;
+                        btnSimpanRiwayat.style.opacity = '1';
+                        btnSimpanRiwayat.style.cursor = 'pointer';
+                    }
+
                     if (sudahDicek) {
                         if (this.value === 'denda') {
-                            // Pilih denda → langsung bisa simpan & selesai
                             btnDone.disabled = false;
                             btnDone.style.opacity = '1';
                             btnDone.style.cursor = 'pointer';
                         } else {
-                            // Pilih ambil kembali → harus simpan riwayat dulu
                             if (!sudahSimpanRiwayat) {
                                 btnDone.disabled = true;
                                 btnDone.style.opacity = '0.4';

@@ -320,7 +320,7 @@ new L.GPX(gpxUrl, {
                     const lat = userMarker.getLatLng().lat;
                     const lng = userMarker.getLatLng().lng;
                     if (lat === 0) {
-                        Swal.showValidationMessage('GPS belum aktif!');
+                        Swal.showValidationMessage('GPS atau internet belum aktif!');
                         return false;
                     }
                     return {
